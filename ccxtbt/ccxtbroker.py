@@ -233,7 +233,9 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
                     or (ccxt_order['side'] == 'sell'
                         and ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']):
                 pos = self.getposition(o_order.data, clone=False)
+                #print("side", ccxt_order['side'], "o_order.size", o_order.size, "o_order.price", o_order.price)
                 pos.update(o_order.size, o_order.price)
+                #print("pos.size", pos.size)
                 o_order.completed()
                 self.notify(o_order)
                 self.open_orders.remove(o_order)
