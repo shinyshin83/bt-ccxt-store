@@ -229,7 +229,9 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
             #print("Closed Order", ccxt_order[self.mappings['closed_order']['key']])
 
             # Check if the order is closed
-            if ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']:
+            if ccxt_order['side'] == 'buy' \
+                    or (ccxt_order['side'] == 'sell'
+                        and ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']):
                 pos = self.getposition(o_order.data, clone=False)
                 pos.update(o_order.size, o_order.price)
                 o_order.completed()
@@ -239,7 +241,8 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
 
             # Manage case when an order is being Canceled from the Exchange
             #  from https://github.com/juancols/bt-ccxt-store/
-            if ccxt_order[self.mappings['canceled_order']['key']] == self.mappings['canceled_order']['value']:
+            if ccxt_order['side'] == 'sell' \
+                    and ccxt_order[self.mappings['canceled_order']['key']] == self.mappings['canceled_order']['value']:
                 self.open_orders.remove(o_order)
                 o_order.cancel()
                 self.notify(o_order)
