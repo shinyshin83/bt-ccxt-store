@@ -38,7 +38,8 @@ class CCXTOrder(OrderBase):
         self.ccxt_order = ccxt_order
         self.executed_fills = []
         self.ordtype = self.Buy if ccxt_order['side'] == 'buy' else self.Sell
-        self.size = float(ccxt_order['amount'])
+
+        self.size = float(ccxt_order['amount']) if ccxt_order['amount'] is not None else 0.0
 
         super(CCXTOrder, self).__init__()
 
