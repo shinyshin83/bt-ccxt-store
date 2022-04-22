@@ -39,7 +39,15 @@ class CCXTOrder(OrderBase):
         self.executed_fills = []
         self.ordtype = self.Buy if ccxt_order['side'] == 'buy' else self.Sell
 
-        self.size = float(ccxt_order['amount']) if ccxt_order['amount'] is not None else 0.0
+
+        if ccxt_order['amount'] is None:
+            # For Upbit Exchange market order
+            amount = 0.0
+            for trade in ccxt_order['trades']:
+                amount += float(trade['amount'])
+            self.size = amount
+        else:
+            self.size = float(ccxt_order['amount'])
 
         super(CCXTOrder, self).__init__()
 
@@ -216,6 +224,9 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
 
             if self.debug:
                 print(json.dumps(ccxt_order, indent=self.indent))
+
+            #print(json.dumps(ccxt_order, indent=self.indent))
+            #print("Closed Order", ccxt_order[self.mappings['closed_order']['key']])
 
             # Check if the order is closed
             if ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']:
