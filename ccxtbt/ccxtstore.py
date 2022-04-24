@@ -158,9 +158,17 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
     @retry
     def get_balance(self):
         balance = self.exchange.fetch_balance()
-
+        print(balance)
         cash = balance['free'][self.currency]
         value = balance['total'][self.currency]
+
+        if self.currency == "KRW":
+            for currency_balance in balance['info']:
+                if currency_balance['currency'] != 'KRW':
+                    curbal = float(currency_balance['locked'])
+                    price = float(currency_balance['avg_buy_price'])
+                    value += curbal * price
+
         # Fix if None is returned
         self._cash = cash if cash else 0
         self._value = value if value else 0
