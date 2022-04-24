@@ -39,7 +39,7 @@ class CCXTOrder(OrderBase):
         self.executed_fills = []
         self.ordtype = self.Buy if ccxt_order['side'] == 'buy' else self.Sell
 
-
+        # Set size
         if ccxt_order['amount'] is None:
             # For Upbit Exchange market order
             amount = 0.0
@@ -48,6 +48,22 @@ class CCXTOrder(OrderBase):
             self.size = amount
         else:
             self.size = float(ccxt_order['amount'])
+
+        # Set price
+        if ccxt_order['price'] is None:
+            if len(ccxt_order['trades']) == 1:
+                self.price = float(ccxt_order['trades'][0]['price'])
+            else:
+                cost = 0
+                amount = 0
+
+                for trade in ccxt_order['trades']:
+                    amount += float(trade['amount'])
+                    cost += float(trade['cost'])
+
+                self.price = cost / amount
+        else:
+            self.price = ccxt_order['price']
 
         super(CCXTOrder, self).__init__()
 
@@ -225,7 +241,7 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
             if self.debug:
                 print(json.dumps(ccxt_order, indent=self.indent))
 
-            #print(json.dumps(ccxt_order, indent=self.indent))
+            print(json.dumps(ccxt_order, indent=self.indent))
             #print("Closed Order", ccxt_order[self.mappings['closed_order']['key']])
 
             # Check if the order is closed
@@ -233,7 +249,7 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
                     or (ccxt_order['side'] == 'sell'
                         and ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']):
                 pos = self.getposition(o_order.data, clone=False)
-                #print("side", ccxt_order['side'], "o_order.size", o_order.size, "o_order.price", o_order.price)
+                print("side", ccxt_order['side'], "o_order.size", o_order.size, "o_order.price", o_order.price)
                 pos.update(o_order.size, o_order.price)
                 #print("pos.size", pos.size)
                 o_order.completed()
@@ -274,7 +290,8 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
         _order = self.store.fetch_order(ret_ord['id'], data.p.dataname)
 
         order = CCXTOrder(owner, data, _order)
-        order.price = ret_ord['price']
+        if order.price is None:
+            order.price = ret_ord['price']
         self.open_orders.append(order)
 
         self.notify(order)
