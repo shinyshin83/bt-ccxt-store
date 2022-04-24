@@ -256,9 +256,11 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
                 self.notify(o_order)
                 self.open_orders.remove(o_order)
                 self.get_balance()
+                print(f"cash: {self.getcash()}, value: {self.getvalue()}")
 
             # Manage case when an order is being Canceled from the Exchange
             #  from https://github.com/juancols/bt-ccxt-store/
+            # 매수 취소 없음.
             if ccxt_order['side'] == 'sell' \
                     and ccxt_order[self.mappings['canceled_order']['key']] == self.mappings['canceled_order']['value']:
                 self.open_orders.remove(o_order)
