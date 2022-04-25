@@ -169,7 +169,7 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
         if self.currency == "KRW":
             for currency_balance in balance['info']:
                 if currency_balance['currency'] != 'KRW':
-                    curbal = float(currency_balance['locked'])
+                    curbal = float(currency_balance['balance'])
                     price = float(currency_balance['avg_buy_price'])
                     value += curbal * price
 
