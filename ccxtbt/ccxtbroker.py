@@ -379,3 +379,15 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
             method_str = 'private_' + type.lower() + endpoint_str.lower()
 
         return self.store.private_end_point(type=type, endpoint=method_str, params=params)
+
+    def add_order_history(self, orders, notify=True):
+        """
+        - orders:
+            [datetime, size, price] or [datetime, size, price, data]
+        """
+        if len(orders) > 3:
+            pos = self.getposition(data=orders[3],clone=False)
+        else:
+            pos = self.getposition(data=self.data,clone=False)
+
+        pos.update(size=orders[1], price=orders[2])
