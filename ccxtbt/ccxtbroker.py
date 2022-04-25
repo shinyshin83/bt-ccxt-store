@@ -214,7 +214,8 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
 
     def next(self):
         if self.debug:
-            print('Broker next() called')
+            #print('Broker next() called')
+            pass
 
         for o_order in list(self.open_orders):
             oID = o_order.ccxt_order['id']

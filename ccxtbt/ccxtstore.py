@@ -102,7 +102,7 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
         self.currency = currency
         self.retries = retries
         self.debug = debug
-
+        print("Init balance")
         self.get_balance()
         """        
         balance = self.exchange.fetch_balance() if 'secret' in config else 0
@@ -176,6 +176,8 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
         # Fix if None is returned
         self._cash = cash if cash else 0
         self._value = value if value else 0
+
+        print(f"Total value: {self._value}, cash: {self._cash}")
 
     @retry
     def getposition(self):
