@@ -102,6 +102,9 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
         self.currency = currency
         self.retries = retries
         self.debug = debug
+
+        self.get_balance()
+        """        
         balance = self.exchange.fetch_balance() if 'secret' in config else 0
         try:
             if balance == 0 or not balance['free'][currency]:
@@ -117,6 +120,7 @@ class CCXTStore(with_metaclass(MetaSingleton, object)):
                 self._value = balance['total'][currency]
         except KeyError:
             self._value = 0
+        """
 
     def get_granularity(self, timeframe, compression):
         if not self.exchange.has['fetchOHLCV']:
