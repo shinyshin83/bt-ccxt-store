@@ -389,5 +389,7 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
             pos = self.getposition(data=orders[3],clone=False)
         else:
             pos = self.getposition(data=self.data,clone=False)
-
-        pos.update(size=orders[1], price=orders[2])
+        size = orders[1]
+        price = orders[2]
+        if (size * price) >= 5000:
+            pos.update(size=size, price=price)
