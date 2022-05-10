@@ -251,7 +251,10 @@ class CCXTBroker(with_metaclass(MetaCCXTBroker, BrokerBase)):
                         and ccxt_order[self.mappings['closed_order']['key']] == self.mappings['closed_order']['value']):
                 pos = self.getposition(o_order.data, clone=False)
                 print("side", ccxt_order['side'], "o_order.size", o_order.size, "o_order.price", o_order.price)
-                pos.update(o_order.size, o_order.price)
+                if o_order.size * o_order.price >= 5000:
+                    pos.update(o_order.size, o_order.price)
+                else:
+                    pos.update(0, o_order.price)
                 #print("pos.size", pos.size)
                 o_order.completed()
                 self.notify(o_order)
